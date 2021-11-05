@@ -1,0 +1,61 @@
+# Author:   yuexdang
+# GitHub:   https://github.com/yuexdang/GaoDeMap
+# Mail:     tensorflow_q@foxmail.com
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>可拖拽的路线规划</title>
+    <style>
+    html,
+    body,
+    #container {
+        width: 100%;
+        height: 100%;
+    }
+    </style>
+    <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=7f05dbce545bf77136e327415b15548d"></script>
+    <script type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
+</head>
+<body>
+<div id="container"></div>
+<script type="text/javascript">
+    var map, route, marker;
+    //基本地图加载
+    map = new AMap.Map('container', {
+      resizeEnable: true,
+      zoom: 11,
+      center: [117.143006,34.215979]
+    });
+
+    // 构造官方卫星、路网图层
+    var satelliteLayer = new AMap.TileLayer.Satellite();
+
+    //批量添加图层
+    map.add(satelliteLayer);
+
+
+	//为地图注册click事件获取鼠标点击出的经纬度坐标 写个鸡巴我又不是写前端的
+  var long_set = [];
+    map.on('dblclick', function(e) {
+        long_set =[ e.lnglat.getLng() , e.lnglat.getLat()];
+    //   console.log(long_set);
+    });
+
+	map.plugin(["AMap.OverView"],function(){
+    	view = new AMap.OverView();
+    	map.addControl(view);
+	}); 
+
+    //绘制初始路径
+    var path = [[117.143006,34.215979],[117.139906,34.207478],[117.150201,34.211987],[117.148301,34.219279]];
+    map.plugin("AMap.DragRoute", function() {
+        route = new AMap.DragRoute(map, path, AMap.DrivingPolicy.LEAST_FEE); //构造拖拽导航类
+        route.search(); //查询导航路径并开启拖拽导航
+    });
+</script>
+</body>
+</html>
